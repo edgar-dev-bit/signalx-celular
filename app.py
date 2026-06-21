@@ -16,7 +16,14 @@ st.markdown("""
     .stMetric { background-color: #1e222d; padding: 10px; border-radius: 10px; border: 1px solid #2a2e39; }
     div[data-testid="stMetricValue"] { font-size: 24px !important; font-weight: bold; }
     </style>
-""", unsafe_unsafe_rendering=True)
+# Estilo CSS personalizado para compactar el diseño en celular
+st.markdown("""
+    <style>
+    .block-container { padding-top: 1rem; padding-bottom: 1rem; padding-left: 0.5rem; padding-right: 0.5rem; }
+    .stMetric { background-color: #1e222d; padding: 10px; border-radius: 10px; border: 1px solid #2a2e39; }
+    div[data-testid="stMetricValue"] { font-size: 24px !important; font-weight: bold; }
+    </style>
+""", unsafe_allow_html=True)
 
 # Encabezado compacto y gráfico
 st.markdown("<h2 style='text-align: center; color: #00e676; margin-bottom: 0px;'>⚡ SIGNALX MÓVIL</h2>", unsafe_allow_html=True)
