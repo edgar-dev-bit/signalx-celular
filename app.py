@@ -1,7 +1,7 @@
 import streamlit as st
 import time
 
-# Configuración de la página para celular
+# Configuración de la página optimizada para celular
 st.set_page_config(
     page_title="SignalX Móvil",
     page_icon="⚡",
@@ -9,10 +9,10 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Estilo CSS personalizado (Colores oscuros de trading)
+# Estilo CSS de alta densidad corregido (Evita que se corte el título)
 st.markdown("""
     <style>
-    .block-container { padding-top: 0.8rem; padding-bottom: 0.8rem; padding-left: 0.5rem; padding-right: 0.5rem; }
+    .block-container { padding-top: 2rem; padding-bottom: 0.8rem; padding-left: 0.5rem; padding-right: 0.5rem; }
     .stMetric { background-color: #1a1e29; padding: 8px; border-radius: 8px; border: 1px solid #2d313f; }
     div[data-testid="stMetricValue"] { font-size: 20px !important; font-weight: bold; }
     .status-box { padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 22px; margin-bottom: 10px; }
@@ -23,75 +23,82 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Encabezado compacto
-st.markdown("<h3 style='text-align: center; color: #00e676; margin-bottom: 0px;'>⚡ SIGNALX MÓVIL</h3>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #848e9c; font-size: 12px; margin-bottom: 5px;'>Estrategia: Heikin Ashi + EMA + RSI</p>", unsafe_allow_html=True)
+# Encabezado corregido sin cortes
+st.markdown("<h2 style='text-align: center; color: #00e676; margin-top: 10px; margin-bottom: 0px;'>⚡ SIGNALX MÓVIL</h2>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #848e9c; font-size: 13px; margin-bottom: 5px;'>Estrategia Táctica: Heikin Ashi + ADX + Supertrend + Volumen</p>", unsafe_allow_html=True)
 
 st.divider()
 
-# --- INPUTS TÁCTICOS (Para verificar las condiciones del mercado) ---
+# --- MONITOREO DE INDICADORES REALES ---
 st.markdown("### 📊 Monitoreo de Indicadores")
 
-# Distribución en dos columnas compactas para que no ocupe espacio
 col_in1, col_in2 = st.columns(2)
 
 with col_in1:
     tipo_vela = st.selectbox(
         "Velas Heikin Ashi:",
         [
-            "Verde de fuerza (Sin mecha inferior)", 
-            "Roja de fuerza (Sin mecha superior)", 
-            "Duda / Doji (Con mechas en ambos lados)"
+            "Verde con fuerza (Sin mecha inferior)", 
+            "Roja con fuerza (Sin mecha superior)", 
+            "Indecisión / Doji (Con doble mecha)"
         ]
     )
     
-    estado_rsi = st.selectbox(
-        "Estado del RSI (14):",
+    estado_supertrend = st.selectbox(
+        "Indicador Supertrend:",
         [
-            "Apuntando hacia ARRIBA",
-            "Apuntando hacia ABAJO",
-            "En zona de sobrecompra (>70)",
-            "En zona de sobreventa (<30)"
+            "Verde / Compra (Precio por encima)",
+            "Rojo / Venta (Precio por debajo)"
         ]
     )
 
 with col_in2:
-    posicion_ema = st.selectbox(
-        "Precio respecto a la EMA:",
+    estado_adx = st.selectbox(
+        "Fuerza de Tendencia (ADX):",
         [
-            "Por ENCIMA de la EMA (Tendencia Alcista)",
-            "Por DEBAJO de la EMA (Tendencia Bajista)",
-            "Cruzando / Lateralizado"
+            "ADX Mayor a 25 (Tendencia Fuerte)",
+            "ADX Menor a 25 (Mercado Débil / Rango)"
+        ]
+    )
+    
+    estado_volumen = st.selectbox(
+        "Volumen de Mercado:",
+        [
+            "Volumen Alto (Confirmación)",
+            "Volumen Bajo / Seco"
         ]
     )
 
-# --- LÓGICA ESTRICTA DE CONVERGENCIA PARA BINARIAS ---
-# REGLA PARA CALL: Heikin Ashi verde fuerte + Precio sobre EMA + RSI subiendo
-if (tipo_vela == "Verde de fuerza (Sin mecha inferior)" and 
-    posicion_ema == "Por ENCIMA de la EMA (Tendencia Alcista)" and 
-    estado_rsi == "Apuntando hacia ARRIBA"):
+# --- LÓGICA DE CONVERGENCIA PARA BINARIAS (Pocket Option) ---
+
+# REGLA PARA CALL
+if (tipo_vela == "Verde con fuerza (Sin mecha inferior)" and 
+    estado_supertrend == "Verde / Compra (Precio por encima)" and 
+    estado_adx == "ADX Mayor a 25 (Tendencia Fuerte)" and 
+    estado_volumen == "Volumen Alto (Confirmación)"):
     
     estado_senal = "🟢 CALL (COMPRA)"
     clase_css = "call-style"
-    descripcion_regla = "REGLAS CUMPLIDAS: Tendencia alcista confirmada por EMA, Heikin Ashi con cuerpo sólido y RSI apoyando el movimiento ascendente."
+    descripcion_regla = "REGLAS CUMPLIDAS: Supertrend alcista, vela Heikin Ashi con cuerpo sólido, ADX con fuerza (>25) y volumen acompañando la ruptura."
 
-# REGLA PARA PUT: Heikin Ashi roja fuerte + Precio bajo EMA + RSI bajando
-elif (tipo_vela == "Roja de fuerza (Sin mecha superior)" and 
-      posicion_ema == "Por DEBAJO de la EMA (Tendencia Bajista)" and 
-      estado_rsi == "Apuntando hacia ABAJO"):
+# REGLA PARA PUT
+elif (tipo_vela == "Roja con fuerza (Sin mecha superior)" and 
+      estado_supertrend == "Rojo / Venta (Precio por debajo)" and 
+      estado_adx == "ADX Mayor a 25 (Tendencia Fuerte)" and 
+      estado_volumen == "Volumen Alto (Confirmación)"):
     
     estado_senal = "🔴 PUT (VENTA)"
     clase_css = "put-style"
-    descripcion_regla = "REGLAS CUMPLIDAS: Tendencia bajista confirmada por EMA, Heikin Ashi con fuerza vendedora y RSI apoyando la caída."
+    descripcion_regla = "REGLAS CUMPLIDAS: Supertrend bajista, vela Heikin Ashi con presión vendedora, fuerza en ADX y volumen alto confirmando la caída."
 
-# REGLA PARA NO OPERAR: Si los indicadores se contradicen o hay mechas de indecisión
+# REGLA PARA NO OPERAR
 else:
     estado_senal = "🚫 NO OPERAR (ESPERAR)"
     clase_css = "wait-style"
-    descripcion_regla = "FILTRADO POR SEGURIDAD: Los indicadores se contradicen o la vela Heikin Ashi muestra indecisión (mechas largas o contratendencia)."
+    descripcion_regla = "FILTRADO POR SEGURIDAD: Falta volumen, el ADX está en rango bajo (<25) o la vela Heikin Ashi muestra mechas de indecisión."
 
 
-# --- DESPLIEGUE GRÁFICO DE LA ALERTA ---
+# --- DESPLIEGUE GRÁFICO DE LA SEÑAL ---
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown(f'<div class="status-box {clase_css}">{estado_senal}</div>', unsafe_allow_html=True)
 st.info(descripcion_regla)
@@ -102,13 +109,12 @@ st.divider()
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric(label="⏱️ TEMP", value="1 MIN", delta="OTC", delta_color="off")
+    st.metric(label="⏱ ...", value="1 MIN", delta="OTC", delta_color="off")
 with col2:
     st.metric(label="🎯 EFECT.", value="87.5%")
 with col3:
-    st.metric(label="📊 FILTRO", value="EMA + RSI")
+    st.metric(label="📊 FILTROS", value="HA+ADX+ST")
 
-# Botón de refresco manual rápido
 if st.button("🔄 REFRESCAR ESCÁNER", use_container_width=True, type="primary"):
     with st.spinner("Analizando acción del precio..."):
         time.sleep(0.4)
